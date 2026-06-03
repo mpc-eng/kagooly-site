@@ -479,6 +479,74 @@ section { padding: 100px 0; }
   font-size: 12px; color: var(--text-secondary); line-height: 1.5;
 }
 
+/* ─── Moments ─── */
+.moments-section {
+  padding: 100px 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.moments-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.moment-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.moment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(26,46,26,0.08);
+}
+.moment-emoji {
+  font-size: 32px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.moment-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 6px; letter-spacing: -0.2px;
+}
+.moment-card p {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.65;
+}
+
+/* ─── Manifesto ─── */
+.manifesto {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+.manifesto h2 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+.manifesto p {
+  font-size: 17px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.manifesto p:last-child {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--fern);
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
 /* ─── Features ─── */
 .features-section { padding: 100px 0; }
 .feature-grid {
@@ -712,6 +780,7 @@ footer {
   .how-grid, .problem-pair { grid-template-columns: 1fr; }
   .feature-grid { grid-template-columns: 1fr; }
   .compare-grid { grid-template-columns: 1fr; }
+  .moments-grid { grid-template-columns: 1fr; }
   .activity-grid { grid-template-columns: repeat(3, 1fr); }
   .pricing-free-grid { grid-template-columns: 1fr; }
   .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
@@ -773,14 +842,14 @@ footer {
 <!-- ─── Hero ─── -->
 <section class="hero">
   <div class="container">
-    <h1 class="reveal">What can you do <span class="accent">outdoors</span> right now?</h1>
+    <h1 class="reveal">Get outside. <span class="accent">Whatever the weather.</span></h1>
     <p class="hero-sub reveal">
-      Kagooly shows you walks, runs, swims, rides and parkruns near you — ranked by today's weather. One app instead of six. Built for the UK.
+      Family bike ride. Hike with the boys. Solo dawn swim. Kagooly finds what works near you right now — walk, run, swim, ride, or parkrun — ranked by today's weather. No PBs required.
     </p>
     <div class="reveal" style="margin-bottom: 40px;">
       <span class="hero-stat">
         <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-        Weather-aware activity discovery for the UK
+        Walkers tolerated. Amblers encouraged. Dawdlers welcome.
       </span>
     </div>
     <div class="reveal hero-actions" style="margin-bottom: 72px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
@@ -875,12 +944,12 @@ footer {
   </div>
 </section>
 
-<!-- ─── Callout ─── -->
+<!-- ─── Walkers Tolerated ─── -->
 <section style="padding: 40px 0;">
   <div class="container">
     <div class="callout reveal">
-      <blockquote>"There's no such thing as bad weather, only unsuitable clothing."</blockquote>
-      <cite>Alfred Wainwright (and every parent who ever packed a cagoule)</cite>
+      <blockquote>No PBs. No splits. No VO2 max. Just&hellip; outside.</blockquote>
+      <cite>Walkers tolerated. Amblers encouraged. Dawdlers welcome.</cite>
     </div>
   </div>
 </section>
@@ -911,6 +980,69 @@ footer {
         <h3>Go</h3>
         <p>Tap for facilities (parking, toilets, cafe, dog-friendly), directions to the start, and offline details for when you lose signal. Save your favourites. Build your list of go-to spots.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Moments ─── -->
+<section class="moments-section" id="moments">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">Made For Real Life</div>
+      <div class="section-title reveal">It's not about the workout.<br>It's about the moment.</div>
+      <p class="section-desc centered reveal">
+        Kagooly isn't a fitness app. It's for the bike ride where your daughter finally keeps up. The walk where you actually talk. The swim that makes Tuesday feel different.
+      </p>
+    </div>
+    <div class="moments-grid">
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x1F6B2;</div>
+        <h3>The family bike ride</h3>
+        <p>Traffic-free trail, flat enough for stabilisers, ice cream van at the end. Sunday sorted.</p>
+      </div>
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x1F9E5;</div>
+        <h3>Hike with the boys</h3>
+        <p>Not Everest. Just a decent walk with a pub at the halfway point and enough signal to send a photo to the group chat.</p>
+      </div>
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x1F30A;</div>
+        <h3>The Tuesday morning swim</h3>
+        <p>Before the school run, before the emails. Ten minutes in cold water that makes you feel like a different person for the rest of the day.</p>
+      </div>
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x1F415;</div>
+        <h3>New walk, same dog</h3>
+        <p>You've done the same loop 200 times. Kagooly finds three more within 15 minutes that you never knew existed.</p>
+      </div>
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x1F3C3;</div>
+        <h3>First parkrun</h3>
+        <p>You walked half of it. The marshals cheered anyway. Your kid thought you won. That counts.</p>
+      </div>
+      <div class="moment-card reveal">
+        <div class="moment-emoji">&#x2615;</div>
+        <h3>The solo wander</h3>
+        <p>No destination. No pace. Just you, a podcast, and whatever path looks interesting. Back in time for lunch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Manifesto ─── -->
+<section style="padding: 60px 0;">
+  <div class="container">
+    <div class="manifesto reveal">
+      <h2>For everyone who moves at their own pace.</h2>
+      <p>
+        We're not here to track your splits or optimise your zone 2.
+        We're here for the people who check the weather, pack a waterproof, and get on with it.
+        The parents negotiating which walk has a cafe. The mates who call it a "hike" but really it's a chat with hills.
+        The wild swimmers who don't post about it. The parkrunners who walk.
+      </p>
+      <p>
+        Outdoors doesn't need to be a performance. It just needs to happen.
+      </p>
     </div>
   </div>
 </section>
