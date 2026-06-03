@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kagooly — The UK outdoor app for every kind of weather</title>
+<meta name="description" content="What can you do outdoors near you right now? Kagooly shows walks, runs, swims, rides and parkruns ranked by today's weather. One app, not six. Free on the App Store.">
+<meta name="theme-color" content="#2D6A4F">
+<meta property="og:title" content="Kagooly — The UK outdoor app for every kind of weather">
+<meta property="og:description" content="What can you do outdoors near you right now? Kagooly shows walks, runs, swims, rides and parkruns ranked by today's weather. One app, not six.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F7F8F5;
+  --bg-surface: #EEF0EB;
+  --bg-card: #FFFFFF;
+  --text: #1A2E1A;
+  --text-secondary: #5A6B5A;
+  --text-tertiary: #8A9A8A;
+  --fern: #2D6A4F;
+  --fern-light: #52B788;
+  --fern-pale: #D8F3E6;
+  --heather: #6B4C8A;
+  --slate-blue: #3A6B8C;
+  --bracken: #8B6914;
+  --parkrun-red: #B8232F;
+  --deep-slate: #1C2127;
+  --warm-dark: #242A32;
+  --fern-glow: rgba(45,106,79,0.08);
+  --fern-glow-strong: rgba(45,106,79,0.15);
+  --card-border: rgba(26,46,26,0.08);
+  --card-shadow: rgba(26,46,26,0.06);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --max-w: 1080px;
+  --radius: 16px;
+  --radius-sm: 12px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+/* ─── Scroll Animations ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── Navigation ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(247,248,245,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+}
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+.nav-logo .logo-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a {
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover { color: var(--text); background: rgba(26,46,26,0.05); }
+.nav-cta {
+  padding: 8px 20px !important;
+  background: var(--fern) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  transition: background 0.2s, transform 0.15s !important;
+}
+.nav-cta:hover { background: var(--fern-light) !important; transform: scale(1.02); }
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: var(--text);
+}
+.nav-hamburger svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: rgba(247,248,245,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 16px 24px;
+  z-index: 99;
+  flex-direction: column;
+  gap: 4px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.mobile-menu a:hover { background: rgba(26,46,26,0.05); color: var(--text); }
+
+/* ─── Hero ─── */
+.hero {
+  padding: 160px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 40px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, var(--fern-glow) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero .container { position: relative; z-index: 1; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 7vw, 76px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--text);
+}
+.hero h1 .accent { color: var(--fern); }
+.hero-sub {
+  font-size: 19px;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto 24px;
+  line-height: 1.7;
+}
+.hero-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fern);
+  background: var(--fern-glow);
+  border: 1px solid rgba(45,106,79,0.2);
+  border-radius: 999px;
+  margin-bottom: 40px;
+}
+.hero-stat svg {
+  width: 16px; height: 16px;
+  stroke: var(--fern);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--fern); color: #fff; }
+.btn-primary:hover { box-shadow: 0 4px 24px var(--fern-glow-strong); transform: scale(1.02); }
+.btn-secondary { background: var(--bg-surface); color: var(--text); border: 1px solid var(--card-border); }
+.btn-secondary:hover { border-color: rgba(26,46,26,0.15); }
+
+/* ─── Phone Mockup ─── */
+.phone-mockup {
+  max-width: 300px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border-radius: 40px;
+  padding: 12px;
+  box-shadow: 0 32px 80px var(--card-shadow), 0 0 0 1px var(--card-border);
+}
+.phone-screen {
+  background: var(--bg);
+  border-radius: 30px;
+  padding: 48px 16px 24px;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+.phone-screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 28px;
+  background: var(--bg-surface);
+  border-radius: 0 0 16px 16px;
+}
+
+/* Weather hero card inside phone */
+.mock-weather {
+  background: linear-gradient(135deg, var(--fern), var(--fern-light));
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+  margin-bottom: 12px;
+}
+.mock-weather-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px;
+}
+.mock-weather-loc { font-size: 15px; font-weight: 600; }
+.mock-weather-temp { font-size: 28px; font-weight: 700; font-family: var(--font-display); }
+.mock-weather-desc { font-size: 12px; opacity: 0.75; }
+.mock-weather-pills {
+  display: flex; gap: 6px; margin-top: 10px;
+}
+.mock-weather-pill {
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+}
+/* Activity cards inside phone */
+.mock-card {
+  background: white;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.mock-card-score {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+  font-family: var(--font-body);
+  flex-shrink: 0;
+}
+.mock-card-score.great { background: rgba(45,157,45,0.1); color: #2D9B2D; }
+.mock-card-score.good { background: rgba(199,123,31,0.1); color: #C77B1F; }
+.mock-card-info { flex: 1; min-width: 0; }
+.mock-card-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mock-card-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.mock-card-type {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── Sections ─── */
+section { padding: 100px 0; }
+.section-label {
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--fern); margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.5vw, 48px);
+  font-weight: 700; letter-spacing: -1.5px;
+  line-height: 1.1; margin-bottom: 16px;
+  color: var(--text);
+}
+.section-desc {
+  font-size: 17px; color: var(--text-secondary);
+  max-width: 520px; line-height: 1.7;
+}
+.section-desc.centered { margin: 0 auto; text-align: center; }
+
+/* ─── Problem Section ─── */
+.problem-section {
+  padding: 100px 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.problem-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.problem-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+.problem-number {
+  font-family: var(--font-display);
+  font-size: 56px; font-weight: 700;
+  letter-spacing: -2px; line-height: 1;
+  margin-bottom: 12px; color: var(--fern);
+}
+.problem-card h3 {
+  font-family: var(--font-display);
+  font-size: 19px; font-weight: 700;
+  margin-bottom: 10px; letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+.problem-card p {
+  font-size: 15px; color: var(--text-secondary);
+  line-height: 1.65;
+}
+.problem-source {
+  font-size: 12px; color: var(--text-tertiary);
+  margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--card-border);
+  font-style: italic;
+}
+
+/* ─── Callout ─── */
+.callout {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 56px 0;
+}
+.callout blockquote {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.callout cite {
+  font-size: 13px; color: var(--text-tertiary);
+  font-style: normal; font-weight: 500;
+  display: block;
+}
+
+/* ─── How It Works ─── */
+.how-section { padding: 100px 0; }
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.how-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+.how-card:hover {
+  border-color: rgba(26,46,26,0.12);
+  box-shadow: 0 4px 16px rgba(26,46,26,0.08);
+}
+.how-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  font-size: 15px; font-weight: 800;
+  margin-bottom: 20px;
+}
+.how-num.step-1 { background: var(--fern-glow); color: var(--fern); border: 1px solid rgba(45,106,79,0.15); }
+.how-num.step-2 { background: rgba(58,107,140,0.08); color: var(--slate-blue); border: 1px solid rgba(58,107,140,0.15); }
+.how-num.step-3 { background: rgba(139,105,20,0.08); color: var(--bracken); border: 1px solid rgba(139,105,20,0.15); }
+.how-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 10px; letter-spacing: -0.3px;
+}
+.how-card p {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ─── Activities ─── */
+.activities-section {
+  padding: 100px 0;
+  background: linear-gradient(180deg, var(--fern-glow) 0%, transparent 100%);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.activity-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  transition: border-color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+.activity-card:hover {
+  border-color: rgba(26,46,26,0.12);
+  transform: translateY(-2px);
+}
+.activity-dot {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.activity-card h3 {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.activity-card p {
+  font-size: 12px; color: var(--text-secondary); line-height: 1.5;
+}
+
+/* ─── Features ─── */
+.features-section { padding: 100px 0; }
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: border-color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+.feature-card:hover {
+  border-color: rgba(26,46,26,0.12);
+  transform: translateY(-2px);
+}
+.feature-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  background: var(--fern-glow);
+  border: 1px solid rgba(45,106,79,0.12);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feature-icon svg {
+  width: 22px; height: 22px;
+  stroke: var(--fern); fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700;
+  margin-bottom: 4px; letter-spacing: -0.2px;
+}
+.feature-card p {
+  font-size: 13px; color: var(--text-secondary); line-height: 1.65;
+}
+
+/* ─── Competitors ─── */
+.compare-section {
+  padding: 100px 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.compare-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+.compare-card.highlighted {
+  border-color: var(--fern);
+  box-shadow: 0 2px 8px var(--card-shadow), 0 0 0 1px var(--fern);
+}
+.compare-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.compare-card .compare-price {
+  font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;
+}
+.compare-card .compare-price strong { color: var(--fern); }
+.compare-list {
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.compare-list li {
+  padding: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.compare-list .check { color: var(--fern); font-weight: 700; flex-shrink: 0; }
+.compare-list .cross { color: #C0392B; font-weight: 700; flex-shrink: 0; }
+
+/* ─── Pricing ─── */
+.pricing-section { padding: 100px 0; }
+.pricing-box {
+  max-width: 640px;
+  margin: 48px auto 0;
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: 0 4px 24px var(--card-shadow);
+}
+.pricing-free h3 {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 700;
+  margin-bottom: 8px;
+}
+.pricing-free .desc {
+  font-size: 15px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;
+}
+.pricing-free-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.pricing-free-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px;
+}
+.pricing-free-item .check {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--fern);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+.pricing-divider {
+  border: none;
+  border-top: 1px solid var(--card-border);
+  margin: 24px 0;
+}
+.pricing-plus {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pricing-plus .price {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--fern);
+}
+.pricing-plus .price-period {
+  font-size: 14px; color: var(--text-secondary); font-weight: 400;
+}
+.pricing-plus .desc {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.5; flex: 1; min-width: 200px;
+}
+
+/* ─── FAQ ─── */
+.faq-section { padding: 100px 0; }
+.faq-list { max-width: 680px; margin: 48px auto 0; }
+.faq-item { border-bottom: 1px solid var(--card-border); }
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  background: none; border: none;
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 600;
+  color: var(--text);
+  cursor: pointer; text-align: left;
+  letter-spacing: -0.2px;
+}
+.faq-question:hover { color: var(--fern); }
+.faq-chevron {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  color: var(--text-tertiary);
+  transition: transform 0.3s;
+}
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-answer-inner {
+  padding: 0 0 20px;
+  font-size: 15px; color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ─── CTA ─── */
+.cta-section {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, var(--fern-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section .container { position: relative; z-index: 1; }
+
+/* ─── Footer ─── */
+footer {
+  border-top: 1px solid var(--card-border);
+  padding: 40px 0;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-left { display: flex; align-items: center; gap: 20px; }
+.footer-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 15px;
+}
+.footer-copy { font-size: 13px; color: var(--text-tertiary); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text-tertiary); transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .hero { padding: 120px 0 80px; }
+  .how-grid, .problem-pair { grid-template-columns: 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .activity-grid { grid-template-columns: repeat(3, 1fr); }
+  .pricing-free-grid { grid-template-columns: 1fr; }
+  .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+  .footer-left { flex-direction: column; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .phone-mockup { max-width: 260px; }
+}
+@media (max-width: 480px) {
+  .hero h1 { letter-spacing: -1.5px; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .btn { width: 100%; max-width: 280px; justify-content: center; }
+  .activity-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-plus { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Navigation ─── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="36" height="36" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" rx="27" fill="url(#nav-icon)"/>
+          <circle cx="82" cy="32" r="16" fill="#52B788" opacity="0.6"/>
+          <line x1="82" y1="12" x2="82" y2="6" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+          <line x1="96" y1="18" x2="100" y2="14" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+          <line x1="102" y1="32" x2="108" y2="32" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+          <text x="22" y="86" font-family="'DM Serif Display', Georgia, serif" font-size="78" font-weight="700" fill="white" opacity="0.95">K</text>
+          <path d="M10 98 Q20 92, 30 98 Q40 104, 50 98 Q60 92, 70 98 Q80 104, 90 98 Q100 92, 110 98" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <defs><linearGradient id="nav-icon" x1="0" y1="0" x2="120" y2="120"><stop stop-color="#1E3A2F"/><stop offset="1" stop-color="#2D6A4F"/></linearGradient></defs>
+        </svg>
+      </div>
+      Kagooly
+    </a>
+    <div class="nav-links">
+      <a href="#problem">Why</a>
+      <a href="#how">How It Works</a>
+      <a href="#activities">Activities</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#" class="nav-cta">Coming Soon</a>
+    </div>
+    <button class="nav-hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu">
+      <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#problem" onclick="document.getElementById('mobile-menu').classList.remove('open')">Why</a>
+  <a href="#how" onclick="document.getElementById('mobile-menu').classList.remove('open')">How It Works</a>
+  <a href="#activities" onclick="document.getElementById('mobile-menu').classList.remove('open')">Activities</a>
+  <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('open')">Pricing</a>
+  <a href="#faq" onclick="document.getElementById('mobile-menu').classList.remove('open')">FAQ</a>
+</div>
+
+<!-- ─── Hero ─── -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal">What can you do <span class="accent">outdoors</span> right now?</h1>
+    <p class="hero-sub reveal">
+      Kagooly shows you walks, runs, swims, rides and parkruns near you — ranked by today's weather. One app instead of six. Built for the UK.
+    </p>
+    <div class="reveal" style="margin-bottom: 40px;">
+      <span class="hero-stat">
+        <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Weather-aware activity discovery for the UK
+      </span>
+    </div>
+    <div class="reveal hero-actions" style="margin-bottom: 72px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+      <a href="#pricing" class="btn btn-primary" style="font-size: 17px; padding: 16px 36px;">
+        Coming Soon
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#how" class="btn btn-secondary" style="font-size: 17px; padding: 16px 36px;">
+        See how it works
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+    </div>
+
+    <!-- Phone Mockup -->
+    <div class="phone-mockup reveal">
+      <div class="phone-screen">
+        <div class="mock-weather">
+          <div class="mock-weather-top">
+            <div>
+              <div class="mock-weather-loc">Sheffield</div>
+              <div class="mock-weather-desc">Clearing up from 2pm</div>
+            </div>
+            <div class="mock-weather-temp">14&deg;</div>
+          </div>
+          <div class="mock-weather-pills">
+            <div class="mock-weather-pill">Light rain til noon</div>
+            <div class="mock-weather-pill">Wind 8mph</div>
+          </div>
+        </div>
+
+        <div class="mock-card">
+          <div class="mock-card-score great">87</div>
+          <div class="mock-card-info">
+            <div class="mock-card-name">Rivelin Valley Walk</div>
+            <div class="mock-card-meta">3.2 mi &middot; Easy &middot; Sheltered &middot; Cafe</div>
+          </div>
+          <div class="mock-card-type" style="background: #2D6A4F;"></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-score great">82</div>
+          <div class="mock-card-info">
+            <div class="mock-card-name">Endcliffe parkrun</div>
+            <div class="mock-card-meta">5K &middot; Sat 9am &middot; Dry by start</div>
+          </div>
+          <div class="mock-card-type" style="background: #B8232F;"></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-score good">68</div>
+          <div class="mock-card-info">
+            <div class="mock-card-name">Hathersage Pool</div>
+            <div class="mock-card-meta">Outdoor swim &middot; 16&deg;C &middot; Good quality</div>
+          </div>
+          <div class="mock-card-type" style="background: #3A6B8C;"></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-score good">64</div>
+          <div class="mock-card-info">
+            <div class="mock-card-name">Trans Pennine Trail</div>
+            <div class="mock-card-meta">Ride &middot; 12 mi &middot; Traffic-free</div>
+          </div>
+          <div class="mock-card-type" style="background: #8B6914;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Problem ─── -->
+<section class="problem-section" id="problem">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">The Problem</div>
+      <div class="section-title reveal">Saturday morning. It might rain.<br>Now what?</div>
+      <p class="section-desc centered reveal">
+        You check the weather, see a rain icon, and abandon your plans. Or you spend 20 minutes switching between AllTrails, OS Maps, Strava, the parkrun site, and a wild swimming group. Kagooly answers the question in under 60 seconds.
+      </p>
+    </div>
+    <div class="problem-pair">
+      <div class="problem-card reveal">
+        <div class="problem-number">79%</div>
+        <h3>of UK adults check the weather every single day</h3>
+        <p>And 70% check before making any plans. A single rain icon becomes a reason not to go out — even when it's only raining for an hour.</p>
+        <div class="problem-source">Met Office, 2025</div>
+      </div>
+      <div class="problem-card reveal">
+        <div class="problem-number">30%</div>
+        <h3>drop in footfall from one rain forecast</h3>
+        <p>Over 100 UK visitor attractions wrote to the Met Office complaining that a single rain icon summarising 24 hours costs up to &pound;137,000 per day in lost revenue.</p>
+        <div class="problem-source">UK Attractions Open Letter, April 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Callout ─── -->
+<section style="padding: 40px 0;">
+  <div class="container">
+    <div class="callout reveal">
+      <blockquote>"There's no such thing as bad weather, only unsuitable clothing."</blockquote>
+      <cite>Alfred Wainwright (and every parent who ever packed a cagoule)</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ─── How It Works ─── -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">How It Works</div>
+      <div class="section-title reveal">From sofa to outside in 60 seconds</div>
+      <p class="section-desc centered reveal">
+        Open Kagooly. See what works near you right now. Go.
+      </p>
+    </div>
+    <div class="how-grid">
+      <div class="how-card reveal">
+        <div class="how-num step-1">1</div>
+        <h3>Open &amp; discover</h3>
+        <p>Your feed shows walks, runs, swims, rides and parkruns near you — each with a weather suitability score from 0 to 100. Sheltered forest walks score high on rainy days. Open moors don't.</p>
+      </div>
+      <div class="how-card reveal">
+        <div class="how-num step-2">2</div>
+        <h3>Check the weather timeline</h3>
+        <p>Every activity has an hour-by-hour weather breakdown. See exactly when rain stops, when wind picks up, and when the best window is. Not a binary forecast — a timeline you can plan around.</p>
+      </div>
+      <div class="how-card reveal">
+        <div class="how-num step-3">3</div>
+        <h3>Go</h3>
+        <p>Tap for facilities (parking, toilets, cafe, dog-friendly), directions to the start, and offline details for when you lose signal. Save your favourites. Build your list of go-to spots.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Activities ─── -->
+<section class="activities-section" id="activities">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">Five Activities, One Feed</div>
+      <div class="section-title reveal">One app, not six</div>
+      <p class="section-desc centered reveal">
+        Stop tab-switching between AllTrails, Strava, OS Maps, the parkrun site, and a wild swimming Facebook group. Kagooly covers them all.
+      </p>
+    </div>
+    <div class="activity-grid">
+      <div class="activity-card reveal">
+        <div class="activity-dot" style="background: rgba(45,106,79,0.1); color: #2D6A4F;">&#x1F6B6;</div>
+        <h3>Walk</h3>
+        <p>140,000 miles of rights of way. Sheltered woodland or exposed ridge — filtered by today's weather.</p>
+      </div>
+      <div class="activity-card reveal">
+        <div class="activity-dot" style="background: rgba(107,76,138,0.1); color: #6B4C8A;">&#x1F3C3;</div>
+        <h3>Run</h3>
+        <p>Trail runs, park circuits, and routes that avoid the headwind. Surface type and terrain difficulty included.</p>
+      </div>
+      <div class="activity-card reveal">
+        <div class="activity-dot" style="background: rgba(58,107,140,0.1); color: #3A6B8C;">&#x1F3CA;</div>
+        <h3>Swim</h3>
+        <p>Wild swimming spots with Environment Agency water quality data. Temperature, tide times, and access info.</p>
+      </div>
+      <div class="activity-card reveal">
+        <div class="activity-dot" style="background: rgba(139,105,20,0.1); color: #8B6914;">&#x1F6B4;</div>
+        <h3>Ride</h3>
+        <p>12,763 miles of National Cycle Network. Traffic-free routes, road rides, and gravel paths — wind direction matters.</p>
+      </div>
+      <div class="activity-card reveal">
+        <div class="activity-dot" style="background: rgba(184,35,47,0.1); color: #B8232F;">&#x1F3C5;</div>
+        <h3>parkrun</h3>
+        <p>Every UK parkrun with Saturday weather forecast, nearest events, and direct registration links. 4M+ finishers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ─── -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">Features</div>
+      <div class="section-title reveal">Built for UK weather, UK data, UK prices</div>
+      <p class="section-desc centered reveal">
+        Every feature exists because a British person needed it on a Saturday morning.
+      </p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+        <div>
+          <h3>Weather suitability score</h3>
+          <p>Every activity gets a 0-100 score based on current conditions. Sheltered walks score high on rainy days. You'll never miss a good day again.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h3>Hour-by-hour weather timeline</h3>
+          <p>Not just "rain today." See exactly when it starts, stops, and what the window looks like. Plan around the weather, not because of it.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <h3>Family-friendly filters</h3>
+          <p>Buggy-accessible, dog-friendly, toilets, cafe nearby, suitable for kids aged 5-12. The things that actually decide whether you go.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <h3>Offline when you need it</h3>
+          <p>Saved activities work offline. Because UK mobile signal dies the moment you leave the car park. This is free, not premium.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <h3>Water quality ratings</h3>
+          <p>Real-time Environment Agency bathing water data for 451 UK sites. Excellent, Good, Sufficient, or Poor. Know before you swim.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div>
+          <h3>Travel time filter</h3>
+          <p>15, 30, 45, or 60 minutes from your location. By car, public transport, or on foot. No point finding a walk that takes longer to reach than to walk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Compare ─── -->
+<section class="compare-section">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">Why Kagooly</div>
+      <div class="section-title reveal">They're global. We're British.</div>
+      <p class="section-desc centered reveal">
+        AllTrails doubled their prices. Komoot fired 85% of staff. OS Maps has great data and terrible UX. Kagooly does one thing properly.
+      </p>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card reveal">
+        <h3>AllTrails</h3>
+        <div class="compare-price">&pound;36&ndash;80/year</div>
+        <ul class="compare-list">
+          <li><span class="cross">&times;</span> US-built, poor UK trail data</li>
+          <li><span class="cross">&times;</span> No weather integration</li>
+          <li><span class="cross">&times;</span> Hiking and biking only</li>
+          <li><span class="cross">&times;</span> Offline maps paywalled</li>
+          <li><span class="cross">&times;</span> Trustpilot: 1.5/5 stars</li>
+        </ul>
+      </div>
+      <div class="compare-card highlighted reveal">
+        <h3>Kagooly</h3>
+        <div class="compare-price"><strong>Free</strong> (Plus: &pound;2.49/mo)</div>
+        <ul class="compare-list">
+          <li><span class="check">&check;</span> Built for UK data and rights of way</li>
+          <li><span class="check">&check;</span> Weather suitability at the core</li>
+          <li><span class="check">&check;</span> Walk, run, swim, ride, parkrun</li>
+          <li><span class="check">&check;</span> Offline access is free</li>
+          <li><span class="check">&check;</span> Generous free tier, honest pricing</li>
+        </ul>
+      </div>
+      <div class="compare-card reveal">
+        <h3>OS Maps</h3>
+        <div class="compare-price">&pound;36/year</div>
+        <ul class="compare-list">
+          <li><span class="check">&check;</span> Definitive UK mapping data</li>
+          <li><span class="cross">&times;</span> No weather awareness</li>
+          <li><span class="cross">&times;</span> Walking only, no discovery</li>
+          <li><span class="cross">&times;</span> Difficult to navigate UX</li>
+          <li><span class="cross">&times;</span> Search sends you to US locations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Pricing ─── -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">Pricing</div>
+      <div class="section-title reveal">Getting outside shouldn't cost money</div>
+      <p class="section-desc centered reveal">
+        Core discovery is always free. We will never paywall the thing that makes you go.
+      </p>
+    </div>
+    <div class="pricing-box reveal">
+      <div class="pricing-free">
+        <h3>Free &mdash; forever</h3>
+        <div class="desc">Everything you need to find something to do outside. No trial. No credit card. No catch.</div>
+        <div class="pricing-free-grid">
+          <div class="pricing-free-item"><div class="check">&check;</div> Weather-aware activity feed</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Multi-activity discovery</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Location &amp; travel time filters</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Activity details &amp; weather timeline</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Water quality ratings</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> parkrun integration</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Save up to 20 activities</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Offline access for saved activities</div>
+          <div class="pricing-free-item"><div class="check">&check;</div> Family-friendly filters</div>
+        </div>
+      </div>
+      <hr class="pricing-divider">
+      <div class="pricing-plus">
+        <div class="price">&pound;2.49<span class="price-period">/mo</span></div>
+        <div class="desc"><strong>Kagooly Plus</strong> &mdash; Unlimited saves, weather alerts ("Your saved walk is dry tomorrow afternoon"), 7-day activity outlook, curated seasonal collections. Deliberately cheaper than every competitor because the activity is already free.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label reveal">FAQ</div>
+      <div class="section-title reveal">Questions</div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          What does "Kagooly" mean?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          It's a playful take on "cagoule" — the thin waterproof jacket every British person was made to pack by their mum. You wear a cagoule precisely because it might rain and you're going anyway. That's the whole philosophy of the app: whatever the weather, there's something to do outside.
+        </div></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          Is it really free?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Yes. The full discovery experience — weather-aware feed, activity details, weather timeline, water quality data, parkrun integration, offline access, and 20 saved activities — is completely free. No trial period, no credit card required. Kagooly Plus adds weather alerts and unlimited saves for &pound;2.49/month, but the core app will always be free.
+        </div></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          Where does the data come from?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          UK-specific public data: Ordnance Survey open data for rights of way and footpaths, Environment Agency for bathing water quality, Sustrans for the National Cycle Network, parkrun for event locations, and weather data from the Met Office. We don't crowdsource routes from California — we use the UK's own infrastructure data.
+        </div></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          Is this UK only?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Yes, deliberately. UK weather, UK rights of way, UK bathing water data, UK parkruns. We'd rather do one country properly than do the whole world badly. The UK has 140,000 miles of public rights of way, 451 monitored bathing sites, and 1,395 parkrun events. That's more than enough to build a great app.
+        </div></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          How is this different from AllTrails?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Three ways. First, weather awareness: every activity is ranked by how suitable it is given today's conditions. AllTrails ignores weather entirely. Second, multi-activity: AllTrails does hiking and biking. Kagooly covers walking, running, swimming, cycling, and parkrun in one feed. Third, UK data quality: AllTrails' UK trail data is notoriously poor — routes across private land, paths that follow A-roads. We use UK-specific datasets.
+        </div></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open'); const a=this.nextElementSibling; a.style.maxHeight=a.style.maxHeight?null:a.scrollHeight+'px'">
+          When does it launch?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          We're building right now. Follow us for launch updates — we'll announce the TestFlight beta first, then the full App Store release.
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="reveal" style="margin-bottom: 32px;">
+      <svg width="80" height="80" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+        <rect width="120" height="120" rx="27" fill="url(#cta-icon)"/>
+        <circle cx="82" cy="32" r="16" fill="#52B788" opacity="0.6"/>
+        <line x1="82" y1="12" x2="82" y2="6" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+        <line x1="96" y1="18" x2="100" y2="14" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+        <line x1="102" y1="32" x2="108" y2="32" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+        <text x="22" y="86" font-family="'DM Serif Display', Georgia, serif" font-size="78" font-weight="700" fill="white" opacity="0.95">K</text>
+        <path d="M10 98 Q20 92, 30 98 Q40 104, 50 98 Q60 92, 70 98 Q80 104, 90 98 Q100 92, 110 98" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <defs><linearGradient id="cta-icon" x1="0" y1="0" x2="120" y2="120"><stop stop-color="#1E3A2F"/><stop offset="1" stop-color="#2D6A4F"/></linearGradient></defs>
+      </svg>
+    </div>
+    <div class="section-title reveal" style="max-width: 600px; margin: 0 auto 16px;">It might rain.<br>Grab your Kagooly.</div>
+    <p class="section-desc centered reveal" style="margin-bottom: 40px;">
+      The first outdoor app that thinks in Celsius, knows what a bridleway is, and doesn't pretend the weather is a problem to solve.
+    </p>
+    <div class="reveal">
+      <a href="#" class="btn btn-primary" style="font-size: 17px; padding: 16px 36px;">
+        Coming Soon
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo">
+          <svg width="28" height="28" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 7px;">
+            <rect width="120" height="120" rx="27" fill="url(#foot-icon)"/>
+            <circle cx="82" cy="32" r="16" fill="#52B788" opacity="0.6"/>
+            <text x="22" y="86" font-family="'DM Serif Display', Georgia, serif" font-size="78" font-weight="700" fill="white" opacity="0.95">K</text>
+            <path d="M10 100 Q30 90, 50 100 Q70 110, 90 100 Q100 94, 110 100" stroke="rgba(255,255,255,0.35)" stroke-width="3" fill="none"/>
+            <defs><linearGradient id="foot-icon" x1="0" y1="0" x2="120" y2="120"><stop stop-color="#1E3A2F"/><stop offset="1" stop-color="#2D6A4F"/></linearGradient></defs>
+          </svg>
+          Kagooly
+        </div>
+        <span class="footer-copy">&copy; 2026 MPC Digital</span>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="support.html">Support</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
